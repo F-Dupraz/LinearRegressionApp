@@ -17,6 +17,8 @@ func main() {
 
 	var hasHeader bool = true
 
+	var myData [][]float64
+
 	for _, name := range myDocuments {
 		// Read CSV data for independent (X) and dependent (Y) variables
 		X_values, err := myCsvReader.GetIndependentVariables(name, hasHeader)
@@ -39,16 +41,18 @@ func main() {
 
 		// Fit the linear regression model and display results
 		if linearRegression.Fit(X_values, Y_values) == 1 {
-			fmt.Println("\nIntercept:", linearRegression.GetIntercept())
-			fmt.Print("Coefficients: ")
-			for _, coef := range linearRegression.GetSlope() {
-				fmt.Print(coef, " ")
+			var myRowData []float64
+			myRowData = append(myRowData, linearRegression.GetIntercept())
+			for _, slope := range linearRegression.GetSlope() {
+				myRowData = append(myRowData, slope)
 			}
-			fmt.Println("\n")
+			myData = append(myData, myRowData)
 		} else {
 			fmt.Println("Error in linear regression fit.")
 		}
 	}
+
+	myCsvReader.WriteCSV("./DB/myDataDB.csv", myData)
 
 	// prediction := linearRegression.Predict([]float64{63.0, 23.085, 0})
 	// fmt.Println("The prediction is:", prediction, "\n")

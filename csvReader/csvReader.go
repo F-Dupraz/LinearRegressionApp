@@ -32,9 +32,11 @@ func (rc *ReadCsv) GetCSVs() []string {
 
 	for _, doc := range myDirDocuments {
 		docName := doc.Name()
-		extension := len(docName) - 3
-		if docName[extension:] == "csv" {
-			myCSVs = append(myCSVs, docName)
+		if len(docName) > 3 {
+			extension := len(docName) - 3
+			if docName[extension:] == "csv" {
+				myCSVs = append(myCSVs, docName)
+			}
 		}
 	}
 
@@ -147,7 +149,6 @@ func (rc *ReadCsv) GetIndependentVariables(filepath string, hasHeader bool) ([][
 	return transposedData, nil
 }
 
-
 // contains checks if a value is present in a slice of uint
 func contains(slice []uint, value uint) bool {
 	for _, v := range slice {
@@ -156,4 +157,35 @@ func contains(slice []uint, value uint) bool {
 		}
 	}
 	return false
+}
+
+func (rc *ReadCsv) WriteCSV(csvFile string, values [][]float64) {
+	file, err := os.OpenFile(csvFile, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		fmt.Printf("Error al abrir el archivo CSV: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	csvWriter := csv.NewWriter(file)
+
+	for _, row := range values {
+		var stringValues []string
+		
+		for _, value := range row {
+			stringValues = append(stringValues, fmt.Sprintf("%f", value))
+		}
+
+		if err := csvWriter.Write(stringValues); err != nil {
+			fmt.Printf("Error al escribir en el archivo CSV: %v\n", err)
+			return
+		}
+	
+		csvWriter.Flush()
+	
+		if err := csvWriter.Error(); err != nil {
+			fmt.Printf("Error al hacer flush en el archivo CSV: %v\n", err)
+			return
+		}
+	}
 }
