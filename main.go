@@ -31,10 +31,6 @@ func main() {
 			os.Exit(1)
 		}
 
-		fmt.Println("This is the length of the X values: ", len(X_values))
-		fmt.Println("This is the length of the X[1] values: ", len(X_values[1]))
-		fmt.Println("This is the length of the Y values: ", len(Y_values))
-
 		// // Error handling for different data lengths
 		if len(X_values[0]) != len(Y_values) {
 			fmt.Println("Error: Different number of data points for the variables.")

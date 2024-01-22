@@ -121,10 +121,10 @@ func (rc *ReadCsv) GetIndependentVariables(filepath string, hasHeader bool) ([][
 		if len(record) > 0 {
 			// Convertir los campos a números flotantes y agregarlos a la matriz
 			var rowData []float64
-			for _, field := range record {
-				value, err := strconv.ParseFloat(field, 64)
+			for i := 0; i < (len(record)-1); i++ {
+				value, err := strconv.ParseFloat(record[i], 64)
 				if err != nil {
-					return nil, fmt.Errorf("Error al convertir a número flotante: %v - Campo: %v", err, field)
+					return nil, fmt.Errorf("Error al convertir a número flotante: %v - Campo: %v", err, record[i])
 				}
 				rowData = append(rowData, value)
 			}

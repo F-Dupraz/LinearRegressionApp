@@ -108,7 +108,6 @@ func (lr *LinearRegression) calculateMeans(xValues [][]float64, means []float64)
 			}
 		}
 		means[i] = accumulatedMeans / float64(len(xValues[i]))
-		fmt.Println(means[i])
 	}
 }
 
@@ -119,8 +118,6 @@ func (lr *LinearRegression) calculateIntercept(xMeans []float64, yMean float64) 
 	}
 
 	lr.intercept = myIntercept
-
-	fmt.Println(lr.intercept)
 }
 
 
