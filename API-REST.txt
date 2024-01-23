@@ -1,0 +1,64 @@
+##################################################
+/predict/inurance
+
+REQUEST
+{
+  "age"      uint
+  "bmi"      float64
+  "children" uint
+}
+
+RESPONSE (Predict)
+{
+  "charges" float64
+}
+
+
+##################################################
+/predict/heart
+
+REQUEST
+{
+  "age"      uint
+  "sex"      1 -> Male/0 -> Female
+  "cp"       uint
+  "trestbps" uint
+  "chol"     uint
+  "fbs"      bool
+  "restecg"  uint
+  "thalach"  uint
+  "exang"    bool
+  "oldpeak"  float64
+  "slope"    uint
+  "ca"       uint
+  "thal"     uint
+}
+
+RESPONSE (Predict)
+{
+  "target" bool
+}
+
+
+##################################################
+/predict/candy
+
+REQUEST
+{
+  "chocolate"        bool
+  "fruity"           bool
+  "caramel"          bool
+  "peanutyalmondy"   bool
+  "nougat"           bool
+  "crispedricewafer" bool
+  "hard"             bool
+  "bar"              bool
+  "pluribus"         bool
+  "sugarpercent"     float64
+  "pricepercent"     float64
+}
+
+RESPONSE (Predict)
+{
+  "winpercent" float64
+}

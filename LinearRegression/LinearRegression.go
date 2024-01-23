@@ -7,8 +7,8 @@ import (
 
 // LinearRegression structure representing a linear regression model.
 type LinearRegression struct {
-	coefficients []float64
-	intercept    float64
+	Coefficients []float64
+	Intercept    float64
 }
 
 // NewLinearRegression is a constructor to create a new instance of LinearRegression.
@@ -27,7 +27,7 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 	}
 
 	numCoefficients := len(xValues)
-	lr.coefficients = make([]float64, numCoefficients)
+	lr.Coefficients = make([]float64, numCoefficients)
 
 	xMeans := make([]float64, numCoefficients)
 	lr.calculateMeans(xValues, xMeans)
@@ -55,7 +55,7 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 			return math.NaN()
 		}
 
-		lr.coefficients[j] = accumulativeNumeratorSum / accumulativeDenominatorSum
+		lr.Coefficients[j] = accumulativeNumeratorSum / accumulativeDenominatorSum
 	}
 
 	lr.calculateIntercept(xMeans, yMean)
@@ -67,15 +67,15 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 // xValues: Vector of input values for making the prediction.
 // Returns the predicted value.
 func (lr *LinearRegression) Predict(xValues []float64) float64 {
-	if len(xValues) != len(lr.coefficients) {
+	if len(xValues) != len(lr.Coefficients) {
 		return math.NaN()
 	}
 
 	// Calculate the predicted dependent variable value
-	result := lr.intercept
+	result := lr.Intercept
 
-	for j := 0; j < len(lr.coefficients); j++ {
-		result += lr.coefficients[j] * xValues[j]
+	for j := 0; j < len(lr.Coefficients); j++ {
+		result += lr.Coefficients[j] * xValues[j]
 	}
 
 	return result
@@ -83,12 +83,12 @@ func (lr *LinearRegression) Predict(xValues []float64) float64 {
 
 // GetSlope returns the coefficients (slopes) of the linear regression model.
 func (lr *LinearRegression) GetSlope() []float64 {
-	return lr.coefficients
+	return lr.Coefficients
 }
 
-// GetIntercept returns the intercept term of the linear regression model.
+// GetIntercept returns the Intercept term of the linear regression model.
 func (lr *LinearRegression) GetIntercept() float64 {
-	return lr.intercept
+	return lr.Intercept
 }
 
 // meanFinder calculates the mean of a vector of numbers.
@@ -122,12 +122,12 @@ func (lr *LinearRegression) calculateMeans(xValues [][]float64, means []float64)
 	}
 }
 
-// calculateIntercept calculates the intercept term of the linear regression model.
+// calculateIntercept calculates the Intercept term of the linear regression model.
 func (lr *LinearRegression) calculateIntercept(xMeans []float64, yMean float64) {
 	myIntercept := yMean
-	for j := 0; j < len(lr.coefficients); j++ {
-		myIntercept -= lr.coefficients[j] * xMeans[j]
+	for j := 0; j < len(lr.Coefficients); j++ {
+		myIntercept -= lr.Coefficients[j] * xMeans[j]
 	}
 
-	lr.intercept = myIntercept
+	lr.Intercept = myIntercept
 }

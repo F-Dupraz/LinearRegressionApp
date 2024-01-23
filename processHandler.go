@@ -18,7 +18,6 @@ func main() {
 	myDocuments := myCSVReader.GetCSVs()
 
 	var hasHeader bool = true
-	var myData [][]float64
 
 	// Iterate over each CSV document.
 	for _, name := range myDocuments {
@@ -50,14 +49,18 @@ func main() {
 			for _, slope := range linearRegression.GetSlope() {
 				myRowData = append(myRowData, slope)
 			}
-			myData = append(myData, myRowData)
+
+			var myCSVData [][]float64
+
+			myCSVData = append(myCSVData, myRowData)
+
+			// Write the data to a database CSV file.
+			DBFileName := "./DB/" + name
+			myCSVReader.WriteCSV(DBFileName, myCSVData)
 		} else {
 			fmt.Println("Error in linear regression fit.")
 		}
 	}
-
-	// Write the data to a database CSV file.
-	myCSVReader.WriteCSV("./DB/myDataDB.csv", myData)
 
 	// Example prediction using the linear regression model.
 	// prediction := linearRegression.Predict([]float64{63.0, 23.085, 0})

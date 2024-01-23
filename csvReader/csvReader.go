@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 )
 
 // ReadCSV struct
@@ -153,6 +154,37 @@ func (rc *ReadCSV) GetIndependentVariables(filePath string, hasHeader bool) ([][
 
 	return transposedData, nil
 }
+
+// Get the worked data
+func (rc *ReadCSV) GetData(filePath string) ([]float64, error) {
+	// Abre el archivo CSV
+	file, err := os.Open(filePath)
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	// Lee el contenido del archivo CSV
+	reader := csv.NewReader(file)
+	record, err := reader.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	// Convierte los valores de la primera línea a float64 y almacénalos en un array
+	var floatArray []float64
+	for _, value := range record {
+		// Elimina espacios en blanco y convierte a float64
+		floatValue, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
+		if err != nil {
+			return nil, err
+		}
+		floatArray = append(floatArray, floatValue)
+	}
+
+	return floatArray, nil
+}
+
 
 // WriteCSV writes data to a CSV file.
 func (rc *ReadCSV) WriteCSV(csvFile string, values [][]float64) {
