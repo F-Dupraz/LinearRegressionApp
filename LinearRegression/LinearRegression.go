@@ -5,17 +5,21 @@ import (
 	"math"
 )
 
-// LinearRegression struct
+// LinearRegression structure representing a linear regression model.
 type LinearRegression struct {
 	coefficients []float64
-	intercept float64
+	intercept    float64
 }
 
-// New LinearRegression constructor
+// NewLinearRegression is a constructor to create a new instance of LinearRegression.
 func NewLinearRegression() *LinearRegression {
 	return &LinearRegression{}
 }
 
+// Fit trains the linear regression model with input and output data.
+// xValues: Matrix of input values.
+// yValues: Vector of corresponding output values.
+// Returns 1 if the fit is successful, NaN in case of an error.
 func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 {
 	if len(xValues) == 0 || len(yValues) == 0 {
 		fmt.Println("Error: One or both vectors are empty.")
@@ -25,7 +29,7 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 	numCoefficients := len(xValues)
 	lr.coefficients = make([]float64, numCoefficients)
 
-	xMeans := make([]float64, numCoefficients) 
+	xMeans := make([]float64, numCoefficients)
 	lr.calculateMeans(xValues, xMeans)
 
 	yMean := lr.meanFinder(yValues)
@@ -39,7 +43,7 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 			if j == 0 {
 				xValue = 1
 			} else {
-				xValue = xValues[i][j] // Intercepto o Xj
+				xValue = xValues[i][j] // Intercept or Xj
 			}
 
 			accumulativeNumeratorSum += (xValue - xMeans[j]) * (yValues[i] - yMean)
@@ -59,6 +63,9 @@ func (lr *LinearRegression) Fit(xValues [][]float64, yValues []float64) float64 
 	return 1
 }
 
+// Predict makes a prediction using the trained model.
+// xValues: Vector of input values for making the prediction.
+// Returns the predicted value.
 func (lr *LinearRegression) Predict(xValues []float64) float64 {
 	if len(xValues) != len(lr.coefficients) {
 		return math.NaN()
@@ -74,14 +81,17 @@ func (lr *LinearRegression) Predict(xValues []float64) float64 {
 	return result
 }
 
+// GetSlope returns the coefficients (slopes) of the linear regression model.
 func (lr *LinearRegression) GetSlope() []float64 {
 	return lr.coefficients
 }
 
+// GetIntercept returns the intercept term of the linear regression model.
 func (lr *LinearRegression) GetIntercept() float64 {
 	return lr.intercept
 }
 
+// meanFinder calculates the mean of a vector of numbers.
 func (lr *LinearRegression) meanFinder(findMean []float64) float64 {
 	if len(findMean) == 0 {
 		fmt.Println("Error: The vector was empty.")
@@ -97,6 +107,7 @@ func (lr *LinearRegression) meanFinder(findMean []float64) float64 {
 	return meanSum
 }
 
+// calculateMeans calculates the means of the columns in an input matrix and stores them in the provided slice.
 func (lr *LinearRegression) calculateMeans(xValues [][]float64, means []float64) {
 	for i := 0; i < len(xValues); i++ {
 		var accumulatedMeans float64
@@ -111,6 +122,7 @@ func (lr *LinearRegression) calculateMeans(xValues [][]float64, means []float64)
 	}
 }
 
+// calculateIntercept calculates the intercept term of the linear regression model.
 func (lr *LinearRegression) calculateIntercept(xMeans []float64, yMean float64) {
 	myIntercept := yMean
 	for j := 0; j < len(lr.coefficients); j++ {
@@ -119,5 +131,3 @@ func (lr *LinearRegression) calculateIntercept(xMeans []float64, yMean float64) 
 
 	lr.intercept = myIntercept
 }
-
-

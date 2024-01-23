@@ -4,18 +4,20 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strconv"
 )
 
-// ReadCsv struct
-type ReadCsv struct{}
+// ReadCSV struct
+type ReadCSV struct{}
 
-// NewReadCsv constructor
-func NewReadCsv() *ReadCsv {
-	return &ReadCsv{}
+// NewReadCSV constructor
+func NewReadCSV() *ReadCSV {
+	return &ReadCSV{}
 }
 
-func (rc *ReadCsv) GetCSVs() []string {
+// GetCSVs gets the list of CSV files in the "CSVs" folder.
+func (rc *ReadCSV) GetCSVs() []string {
 	var myCSVs []string
 
 	myDir, err := os.Getwd()
@@ -24,7 +26,10 @@ func (rc *ReadCsv) GetCSVs() []string {
 		return nil
 	}
 
-	myDirDocuments, err := os.ReadDir(myDir)
+	CSVDir := "CSVs"
+	myCSVsDir := filepath.Join(myDir, CSVDir)
+
+	myDirDocuments, err := os.ReadDir(myCSVsDir)
 	if err != nil {
 		fmt.Errorf("%v", err)
 		return nil
@@ -43,10 +48,10 @@ func (rc *ReadCsv) GetCSVs() []string {
 	return myCSVs
 }
 
-// GetTargetValues gets target values from a CSV file
-func (rc *ReadCsv) GetTargetValues(filepath string, hasHeader bool) ([]float64, error) {
+// GetTargetValues gets target values from a CSV file.
+func (rc *ReadCSV) GetTargetValues(filePath string, hasHeader bool) ([]float64, error) {
 	// Open the CSV file
-	file, err := os.Open(filepath)
+	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to open the file: %v", err)
 	}
@@ -89,55 +94,55 @@ func (rc *ReadCsv) GetTargetValues(filepath string, hasHeader bool) ([]float64, 
 	return columnData, nil
 }
 
-// GetIndependentVariables obtiene variables independientes desde un archivo CSV
-func (rc *ReadCsv) GetIndependentVariables(filepath string, hasHeader bool) ([][]float64, error) {
-	// Abrir el archivo CSV
-	file, err := os.Open(filepath)
+// GetIndependentVariables gets independent variables from a CSV file.
+func (rc *ReadCSV) GetIndependentVariables(filePath string, hasHeader bool) ([][]float64, error) {
+	// Open the CSV file
+	file, err := os.Open(filePath)
 	if err != nil {
-		return nil, fmt.Errorf("No se puede abrir el archivo: %v", err)
+		return nil, fmt.Errorf("Unable to open the file: %v", err)
 	}
 	defer file.Close()
 
-	// Crear un lector de CSV
+	// Create a CSV reader
 	reader := csv.NewReader(file)
 
-	// Leer el encabezado si existe
+	// Read the header if it exists
 	if hasHeader {
 		_, err := reader.Read()
 		if err != nil {
-			return nil, fmt.Errorf("Error al leer el encabezado: %v", err)
+			return nil, fmt.Errorf("Error reading header: %v", err)
 		}
 	}
 
-	// Inicializar la matriz 2D para almacenar datos de múltiples columnas
+	// Initialize the 2D matrix to store data from multiple columns
 	var columnsData [][]float64
 
-	// Leer datos del archivo CSV
+	// Read data from the CSV file
 	for {
 		record, err := reader.Read()
 		if err != nil {
 			break
 		}
 
-		// Verificar que la fila tiene al menos una columna
+		// Ensure the row has at least one column
 		if len(record) > 0 {
-			// Convertir los campos a números flotantes y agregarlos a la matriz
+			// Convert the fields to floating-point numbers and add them to the matrix
 			var rowData []float64
-			for i := 0; i < (len(record)-1); i++ {
+			for i := 0; i < (len(record) - 1); i++ {
 				value, err := strconv.ParseFloat(record[i], 64)
 				if err != nil {
-					return nil, fmt.Errorf("Error al convertir a número flotante: %v - Campo: %v", err, record[i])
+					return nil, fmt.Errorf("Error converting to floating-point number: %v - Field: %v", err, record[i])
 				}
 				rowData = append(rowData, value)
 			}
 
 			columnsData = append(columnsData, rowData)
 		} else {
-			return nil, fmt.Errorf("Error: La fila no tiene campos")
+			return nil, fmt.Errorf("Error: The row does not have any fields")
 		}
 	}
 
-	// Transponer los datos directamente en columnsData
+	// Transpose the data directly into columnsData
 	transposedData := make([][]float64, len(columnsData[0]))
 	for i := range transposedData {
 		transposedData[i] = make([]float64, len(columnsData))
@@ -149,20 +154,11 @@ func (rc *ReadCsv) GetIndependentVariables(filepath string, hasHeader bool) ([][
 	return transposedData, nil
 }
 
-// contains checks if a value is present in a slice of uint
-func contains(slice []uint, value uint) bool {
-	for _, v := range slice {
-		if v == value {
-			return true
-		}
-	}
-	return false
-}
-
-func (rc *ReadCsv) WriteCSV(csvFile string, values [][]float64) {
+// WriteCSV writes data to a CSV file.
+func (rc *ReadCSV) WriteCSV(csvFile string, values [][]float64) {
 	file, err := os.OpenFile(csvFile, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
-		fmt.Printf("Error al abrir el archivo CSV: %v\n", err)
+		fmt.Printf("Error opening the CSV file: %v\n", err)
 		return
 	}
 	defer file.Close()
@@ -171,20 +167,20 @@ func (rc *ReadCsv) WriteCSV(csvFile string, values [][]float64) {
 
 	for _, row := range values {
 		var stringValues []string
-		
+
 		for _, value := range row {
 			stringValues = append(stringValues, fmt.Sprintf("%f", value))
 		}
 
 		if err := csvWriter.Write(stringValues); err != nil {
-			fmt.Printf("Error al escribir en el archivo CSV: %v\n", err)
+			fmt.Printf("Error writing to the CSV file: %v\n", err)
 			return
 		}
-	
+
 		csvWriter.Flush()
-	
+
 		if err := csvWriter.Error(); err != nil {
-			fmt.Printf("Error al hacer flush en el archivo CSV: %v\n", err)
+			fmt.Printf("Error flushing to the CSV file: %v\n", err)
 			return
 		}
 	}
