@@ -56,7 +56,7 @@ func main() {
 
 			// Write the data to a database CSV file.
 			DBFileName := "./DB/" + name
-			myCSVReader.WriteCSV(DBFileName, myCSVData)
+			myCSVReader.WriteDB(DBFileName, myCSVData)
 		} else {
 			fmt.Println("Error in linear regression fit.")
 		}

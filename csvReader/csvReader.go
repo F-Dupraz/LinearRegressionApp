@@ -186,8 +186,8 @@ func (rc *ReadCSV) GetData(filePath string) ([]float64, error) {
 }
 
 
-// WriteCSV writes data to a CSV file.
-func (rc *ReadCSV) WriteCSV(csvFile string, values [][]float64) {
+// WriteDB writes data to a CSV file.
+func (rc *ReadCSV) WriteDB(csvFile string, values [][]float64) {
 	file, err := os.OpenFile(csvFile, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		fmt.Printf("Error opening the CSV file: %v\n", err)
@@ -215,5 +215,30 @@ func (rc *ReadCSV) WriteCSV(csvFile string, values [][]float64) {
 			fmt.Printf("Error flushing to the CSV file: %v\n", err)
 			return
 		}
+	}
+}
+
+
+// WriteCSV writes a single row of data to the end of a CSV file.
+func (rc *ReadCSV) WriteCSV(csvFile string, values []string) {
+	file, err := os.OpenFile(csvFile, os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
+	if err != nil {
+		fmt.Printf("Error opening the CSV file: %v\n", err)
+		return
+	}
+	defer file.Close()
+
+	csvWriter := csv.NewWriter(file)
+
+	if err := csvWriter.Write(values); err != nil {
+		fmt.Printf("Error writing to the CSV file: %v\n", err)
+		return
+	}
+
+	csvWriter.Flush()
+
+	if err := csvWriter.Error(); err != nil {
+		fmt.Printf("Error flushing to the CSV file: %v\n", err)
+		return
 	}
 }
