@@ -21,6 +21,8 @@ func BindRoutes(s server.Server, r *mux.Router) {
 	r.HandleFunc("/predict/candy", handlers.PredictCandy(s)).Methods(http.MethodPost)
 
 	r.HandleFunc("/train/inurance", handlers.TrainInsurance(s)).Methods(http.MethodPost)
+	r.HandleFunc("/train/heart", handlers.TrainHeart(s)).Methods(http.MethodPost)
+	r.HandleFunc("/train/candy", handlers.TrainCandy(s)).Methods(http.MethodPost)
 }
 
 func main() {
