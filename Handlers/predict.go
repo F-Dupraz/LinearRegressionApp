@@ -73,9 +73,18 @@ func PredictInsurance(s server.Server) http.HandlerFunc {
 		linearRegression := LR.NewLinearRegression()
 		myCSVReader := CSVReader.NewReadCSV()
 
-		predictionData, err := myCSVReader.GetData("./DB/insurance.csv")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		var predictionData []float64
+
+		if s != nil {
+			predictionData, err = myCSVReader.GetData("./DB/insurance.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+		} else {
+			predictionData, err = myCSVReader.GetData("../DB/insurance.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
 		}
 
 		for i := 0; i < len(predictionData); i++ {
@@ -95,6 +104,7 @@ func PredictInsurance(s server.Server) http.HandlerFunc {
 		prediction := linearRegression.Predict(inputData)
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(ResponsePredictInsurance{
 			Charges: float64(prediction),
 		})
@@ -146,6 +156,7 @@ func PredictHeart(s server.Server) http.HandlerFunc {
 		prediction := linearRegression.Predict(inputData)
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(ResponsePredictHeart{
 			Target: float64(prediction),
 		})
@@ -195,6 +206,7 @@ func PredictCandy(s server.Server) http.HandlerFunc {
 		prediction := linearRegression.Predict(inputData)
 
 		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(ResponsePredictCandy{
 			WinPercent: float64(prediction),
 		})

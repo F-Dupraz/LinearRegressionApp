@@ -16,11 +16,11 @@ import (
 func BindRoutes(s server.Server, r *mux.Router) {
 	r.HandleFunc("/", handlers.HandlerRoot(s)).Methods(http.MethodGet)
 
-	r.HandleFunc("/predict/inurance", handlers.PredictInsurance(s)).Methods(http.MethodPost)
+	r.HandleFunc("/predict/insurance", handlers.PredictInsurance(s)).Methods(http.MethodPost)
 	r.HandleFunc("/predict/heart", handlers.PredictHeart(s)).Methods(http.MethodPost)
 	r.HandleFunc("/predict/candy", handlers.PredictCandy(s)).Methods(http.MethodPost)
 
-	r.HandleFunc("/train/inurance", handlers.TrainInsurance(s)).Methods(http.MethodPost)
+	r.HandleFunc("/predict/insurance", handlers.TrainInsurance(s)).Methods(http.MethodPost)
 	r.HandleFunc("/train/heart", handlers.TrainHeart(s)).Methods(http.MethodPost)
 	r.HandleFunc("/train/candy", handlers.TrainCandy(s)).Methods(http.MethodPost)
 }
