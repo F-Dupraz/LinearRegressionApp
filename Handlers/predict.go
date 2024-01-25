@@ -23,7 +23,7 @@ type ResponsePredictInsurance struct {
 // Heart REQUEST and RESPONSE
 type RequestPredictHeart struct {
 	Age      uint    `json:"age"`
-	Sex      uint    `json:"sex"`      // 1 -> Male, 0 -> Female
+	Sex      uint    `json:"sex"`
 	Cp       uint    `json:"cp"`
 	Trestbps uint    `json:"trestbps"`
 	Chol     uint    `json:"chol"`
@@ -124,9 +124,18 @@ func PredictHeart(s server.Server) http.HandlerFunc {
 		linearRegression := LR.NewLinearRegression()
 		myCSVReader := CSVReader.NewReadCSV()
 
-		predictionData, err := myCSVReader.GetData("./DB/heart.csv")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		var predictionData []float64
+
+		if s != nil {
+			predictionData, err = myCSVReader.GetData("./DB/heart.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+		} else {
+			predictionData, err = myCSVReader.GetData("../DB/heart.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
 		}
 
 		for i := 0; i < len(predictionData); i++ {
@@ -176,9 +185,18 @@ func PredictCandy(s server.Server) http.HandlerFunc {
 		linearRegression := LR.NewLinearRegression()
 		myCSVReader := CSVReader.NewReadCSV()
 
-		predictionData, err := myCSVReader.GetData("./DB/candy.csv")
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
+		var predictionData []float64
+
+		if s != nil {
+			predictionData, err = myCSVReader.GetData("./DB/candy.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
+		} else {
+			predictionData, err = myCSVReader.GetData("../DB/candy.csv")
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusBadRequest)
+			}
 		}
 
 		for i := 0; i < len(predictionData); i++ {
